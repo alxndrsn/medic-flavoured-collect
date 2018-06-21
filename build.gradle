@@ -1,0 +1,74 @@
+// FOLLOWING COPIED FROM collect/build.gradle
+ext {
+    // Play Services is a big download so it should only be upgraded if necessary and after
+    // community discussion and a warning period.
+    playServicesVersion = '10.0.1'
+
+    supportLibraryVersion = '27.1.1'
+    leakyCanaryVersion = '1.5.4'
+    daggerVersion = '2.14'
+    rxLifecycleVersion = '2.2.1'
+}
+// from allprojects {
+    repositories {
+        jcenter()
+        maven { url = 'https://oss.sonatype.org/content/groups/public' }
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+// }
+
+// FOLLOWING COPIED FROM collect/android_app/build.gradle
+
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.2'
+    }
+}
+
+dependencies {
+    implementation project(':collect:android_lib')
+    implementation 'com.android.support:multidex:1.0.3'
+}
+
+android {
+    compileSdkVersion(27)
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId 'medic.collect.brandingdemo' // CHANGED
+        minSdkVersion(16)
+        multiDexEnabled true
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
+    }
+
+    // https://stackoverflow.com/a/27119543/152938
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = new File(outputFileName.replace(".apk", "-${defaultConfig.versionName}.apk"))
+        }
+    }
+    testVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = new File(outputFileName.replace(".apk", "-${defaultConfig.versionName}.apk"))
+        }
+    }
+
+}
